@@ -1,6 +1,6 @@
 let nowYear; // ex. 2024
 let nowMonth; // ex. 08
-let filterType = 'all';
+let filterType = 'income';
 const categoryMapping = {
     food: "식비",
     congratulation: "경조사",
@@ -21,17 +21,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     const incomeChangeMessage = document.getElementById('incomeChangeMessage');
     const expendChangeMessage = document.getElementById('expendChangeMessage');
     const detailCounts = document.getElementById('detailCounts');
-    const totalBtn = document.getElementById('totalBtn');
+    // const totalBtn = document.getElementById('totalBtn');
     const incomeBtn = document.getElementById('incomeBtn');
     const expendBtn = document.getElementById('expendBtn');
     const detailMonth = document.getElementById('detailMonth');
     const detailContentsDiv = document.getElementById('detailContentsDiv');
 
     let sampleData;
-    // sampleDataDivision.json 데이터 반환 함수
+    // sampleMonthlyData.json 데이터 반환 함수
     const getSampleData = async () => {
         try {
-            const response = await fetch('../json/sampleDataDivision.json');
+            const response = await fetch('../json/sampleMonthlyData.json');
             console.log('Fetch Response:', response);
             sampleData = await response.json();
         } catch (error) {
@@ -323,7 +323,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         nowYear = nowDateValueArr[0];
         nowMonth = nowDateValueArr[1];
 
-        // sampleDataDivision.json 데이터 반환
+        // sampleMonthlyData.json 데이터 반환
         await getSampleData();
         console.log(sampleData);
 
@@ -435,7 +435,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
     // totalBtn, incomeBtn, expendBtn 클릭시 색깔 변화
-    const buttons = [totalBtn, incomeBtn, expendBtn];
+    const buttons = [incomeBtn, expendBtn];
     // 공통 스타일 변경 함수
     const setActiveButton = (activeBtn) => {
         buttons.forEach((btn) => {
@@ -452,11 +452,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     // 버튼 클릭 이벤트 리스너 추가
-    totalBtn.addEventListener("click", () => {
-        setActiveButton(totalBtn); // 전체 버튼 활성화
-        filterType = 'all';
-        displayDetailCounts(nowYear, nowMonth, filterType); // 상세 내역 개수 갱신
-    });
+    // totalBtn.addEventListener("click", () => {
+    //     setActiveButton(totalBtn); // 전체 버튼 활성화
+    //     filterType = 'all';
+    //     displayDetailCounts(nowYear, nowMonth, filterType); // 상세 내역 개수 갱신
+    // });
 
     incomeBtn.addEventListener("click", () => {
         setActiveButton(incomeBtn); // 수입 버튼 활성화
@@ -473,7 +473,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     //totalBtn 클릭 시 sampleData 필러링 -> 이게 필요한가?
     const getSamplebottondata = async () => {
         try {
-            const response = await fetch('../json/sampleDataDivision.json');
+            const response = await fetch('../json/sampleMonthlyData.json');
             sampleData = await response.json();
             console.log("sampleData loaded:", sampleData);
         } catch (error) {
@@ -503,17 +503,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
 // 데이터가 로드된 후에만 필터 함수 호출
-    totalBtn.addEventListener("click", async () => {
-        if (sampleData) {
-            const allData = filterDataByYearMonthAndType(sampleData, nowYear, nowMonth, "all");
-            console.log(`nowYear: ${nowYear}, nowMonth: ${nowMonth}`);
-
-            await generateDetailCode(filterType);
-            console.log("전체 데이터:", allData);
-        } else {
-            console.error("sampleData가 아직 로드되지 않았습니다.");
-        }
-    });
+//     totalBtn.addEventListener("click", async () => {
+//         if (sampleData) {
+//             const allData = filterDataByYearMonthAndType(sampleData, nowYear, nowMonth, "all");
+//             console.log(`nowYear: ${nowYear}, nowMonth: ${nowMonth}`);
+//
+//             await generateDetailCode(filterType);
+//             console.log("전체 데이터:", allData);
+//         } else {
+//             console.error("sampleData가 아직 로드되지 않았습니다.");
+//         }
+//     });
 
 
     // 버튼 클릭 이벤트 리스너
