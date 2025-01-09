@@ -32,11 +32,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     const getSampleData = async () => {
         try {
             const response = await fetch('../json/sampleDataDivision.json');
+            console.log('Fetch Response:', response);
             sampleData = await response.json();
         } catch (error) {
             console.error(error);
         }
+
     };
+    console.log("전체 데이터 확인:", sampleData);
 
     /**
      * 상세 내역 코드 생성 함수
@@ -50,7 +53,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (type === 'income') {
             sampleData.income.forEach(data => {
-                if (String(data.yearMonth).slice(0, 2) === String(nowYear).slice(2, 4) && String(data.yearMonth).slice(2, 4) === nowMonth) {
+                let ny;
+                if (nowYear.length === 2) {
+                    ny = String(nowYear);
+                } else {
+                    ny = String(nowYear).slice(2, 4);
+                }
+
+                if (String(data.yearMonth).slice(0, 2) == ny && String(data.yearMonth).slice(2, 4) == nowMonth) {
                     data.details.forEach(detail => {
                         const dataymd = detail.date;
                         const category = categoryMapping[detail.category]
@@ -89,7 +99,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else if (type === 'expend') {
             detailContentsDiv.innerHTML = '';
             sampleData.expend.forEach(data => {
-                if (String(data.yearMonth).slice(0, 2) === String(nowYear).slice(2, 4) && String(data.yearMonth).slice(2, 4) === nowMonth) {
+                let ny;
+                if (nowYear.length === 2) {
+                    ny = String(nowYear);
+                } else {
+                    ny = String(nowYear).slice(2, 4);
+                }
+
+                if (String(data.yearMonth).slice(0, 2) == ny && String(data.yearMonth).slice(2, 4) == nowMonth) {
 
                     const uniqueDetails = data.details.reduce((acc, detail) => {
                         const uniqueKey = `${detail.date}-${detail.title}-${detail.method}-${detail.category}-${detail.amount}`;
@@ -139,7 +156,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                         </div>`;
                     });
                 } else {
-                    console.error('Invalid type provided. Must be "income" or "expend".');
+                    console.error(`String(data.yearMonth).slice(0, 2): ${String(data.yearMonth).slice(0, 2)}, String(nowYear).slice(2, 4): ${ny}`);
+                    console.error(`String(data.yearMonth).slice(2, 4): ${String(data.yearMonth).slice(2, 4)}, nowMonth: ${nowMonth}`);
                 }
 
             });
@@ -321,6 +339,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // 상세 내역 초기화
         console.log("...");
+        console.log(`nowYear: ${nowYear}, nowMonth: ${nowMonth}`);
         await generateDetailCode(filterType);
         console.log("......");
     } catch (error) {
@@ -368,6 +387,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             // 상세 내역 개수 갱신
             displayDetailCounts(nowYear, nowMonth, filterType);
+
+            // 상세 내역 내용 갱신
+            generateDetailCode(filterType);
         });
 
         nextDateBtn.addEventListener('click', () => {
@@ -403,6 +425,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             // 상세 내역 개수 갱신
             displayDetailCounts(nowYear, nowMonth, filterType);
+
+            // 상세 내역 내용 갱신
+            generateDetailCode(filterType);
         });
     } catch (error) {
         console.error(error);
@@ -481,6 +506,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     totalBtn.addEventListener("click", async () => {
         if (sampleData) {
             const allData = filterDataByYearMonthAndType(sampleData, nowYear, nowMonth, "all");
+            console.log(`nowYear: ${nowYear}, nowMonth: ${nowMonth}`);
+
             await generateDetailCode(filterType);
             console.log("전체 데이터:", allData);
         } else {
@@ -492,12 +519,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 버튼 클릭 이벤트 리스너
     incomeBtn.addEventListener("click", async () => {
         const incomeData = filterDataByYearMonthAndType(sampleData, nowYear, nowMonth, "income");
+        console.log(`nowYear: ${nowYear}, nowMonth: ${nowMonth}`);
+
         await generateDetailCode(filterType);
         console.log("수입 데이터:", incomeData); // 현재 월의 수입 데이터
     });
 
     expendBtn.addEventListener("click", async () => {
         const expendData = filterDataByYearMonthAndType(sampleData, nowYear, nowMonth, "expense");
+        console.log(`nowYear: ${nowYear}, nowMonth: ${nowMonth}`);
+
         await generateDetailCode(filterType);
         console.log("지출 데이터:", expendData); // 현재 월의 지출 데이터
     });
